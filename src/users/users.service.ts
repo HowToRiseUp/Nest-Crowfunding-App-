@@ -3,7 +3,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { User } from './schemas/user.schema';
-import { Model } from 'mongoose';
+import mongoose, { Model } from 'mongoose';
 import * as bcrypt from 'bcrypt';
 
 @Injectable()
@@ -23,12 +23,14 @@ export class UsersService {
     return user;
   }
 
-  findAll() {
-    return `This action returns all users`;
+  async findOne(id: string) {
+    if (!mongoose.Types.ObjectId.isValid(id)) return 'Not found';
+    const user = await this.userModel.findOne({ _id: id });
+    return user;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
+  findAll() {
+    return `This action returns all users`;
   }
 
   update(id: number, updateUserDto: UpdateUserDto) {
