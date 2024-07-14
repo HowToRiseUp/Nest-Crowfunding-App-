@@ -9,7 +9,6 @@ import * as bcrypt from 'bcrypt';
 @Injectable()
 export class UsersService {
   constructor(@InjectModel(User.name) private userModel: Model<User>) {}
-
   getHashPassword = async (password: string) => {
     const saltOrRounds = 10;
     const hash = await bcrypt.hash(password, saltOrRounds);
@@ -29,15 +28,30 @@ export class UsersService {
     return user;
   }
 
-  findAll() {
-    return `This action returns all users`;
+  async findOneByUsername(user: string) {
+    return this.userModel.findOne({ email: user });
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  isValidPassword(password: string, hash: string) {
+    return bcrypt.compareSync(password, hash);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+  async update(updateUserDto: UpdateUserDto) {
+    const user = await this.userModel.updateOne(
+      { _id: updateUserDto._id },
+      { ...updateUserDto },
+    );
+    return user;
+  }
+
+  async remove(id: string) {
+    if (!mongoose.Types.ObjectId.isValid(id)) return 'Not found';
+    const user = await this.userModel.deleteOne({ _id: id });
+    return user;
+  }
+
+  async findAll() {
+    const user = await this.userModel.find();
+    return user;
   }
 }

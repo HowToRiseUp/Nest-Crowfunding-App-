@@ -1,1 +1,3 @@
 - mongodb+srv://burnhao:<password>@cluster0.edqy3ei.mongodb.net/
+- Passport auth
+- node 16.13.1
